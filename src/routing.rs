@@ -3,8 +3,9 @@ use crate::constants::{N_BUCKETS, K_PARAM};
 use crate::key::{Distance, Key};
 
 use log::{info, warn};
+use serde::{Serialize, Deserialize};
 
-#[derive(Hash, Eq, PartialEq, Debug, Clone, RustcEncodable, RustcDecodable)]
+#[derive(Hash, Eq, PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct NodeInfo {
     pub id:Key,
     pub addr:String,
@@ -17,7 +18,7 @@ pub struct RoutingTable {
     buckets:Vec<Vec<NodeInfo>>
 }
 
-#[derive(Eq, Hash, Clone, Debug, RustcEncodable, RustcDecodable)]
+#[derive(Eq, Hash, Clone, Debug, Serialize, Deserialize)]
 pub struct NodeAndDistance(pub NodeInfo, pub Distance);
 
 impl PartialEq for NodeAndDistance {

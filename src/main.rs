@@ -1,4 +1,3 @@
-extern crate rustc_serialize;
 extern crate env_logger;
 
 use std::io;

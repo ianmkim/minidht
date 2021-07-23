@@ -6,16 +6,20 @@ use std::sync::mpsc;
 use std::sync::mpsc::{Receiver, Sender};
 use std::thread;
 use std::time::Duration;
-use rustc_serialize::json;
 
 use log::{info, warn, debug};
+use rustc_serialize::json;
+
+use serde::{Serialize, Deserialize};
+use serde_json;
 
 use crate::constants::{MESSAGE_LEN, TIMEOUT};
 use crate::node::{Reply, Request};
 use crate::key::Key;
 use crate::routing::NodeInfo;
 
-#[derive(Clone, Debug, RustcEncodable, RustcDecodable)]
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct RpcMessage {
     token: Key,
     src: NodeInfo,
@@ -23,7 +27,7 @@ pub struct RpcMessage {
     msg: Message,
 }
 
-#[derive(Clone, Debug, RustcEncodable, RustcDecodable)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum Message {
     Kill,
     Request(Request),
@@ -80,7 +84,7 @@ impl Rpc {
             loop {
                 let (len, src_addr) = rpc.socket.recv_from(&mut buf).unwrap();
                 let buf_str = String::from(str::from_utf8(&buf[..len]).unwrap());
-                let mut rmsg = json::decode::<RpcMessage>(&buf_str).unwrap();
+                let mut rmsg:RpcMessage = serde_json::from_str(&buf_str).unwrap();
                 rmsg.src.addr = src_addr.to_string();
 
                 debug!("| IN | {:?} <== {:?}", rmsg.msg, rmsg.src.id);
@@ -141,8 +145,8 @@ impl Rpc {
     }
 
     fn send_msg(&self, rmsg:&RpcMessage, addr:&str){
-        let enc_msg = json::encode(rmsg).unwrap();
-        self.socket.send_to(&enc_msg.as_bytes(), addr).unwrap();
+        let encoded_msg = serde_json::to_string(rmsg).unwrap();
+        self.socket.send_to(&encoded_msg.as_bytes(), addr).unwrap();
         debug!("| OUT | {:?} ==> {:?} ", rmsg.msg, rmsg.dst.id);
     }
 
