@@ -8,5 +8,6 @@ authors = ["Ian Kim <ian@ianmkim.com>"]
 rustc-serialize = "0.3.*"
 rand = "0.8.*"
 sha2="0.9.*"
+rust-crypto="*"
 log = "0.4.*"
 env_logger = "0.9.*"

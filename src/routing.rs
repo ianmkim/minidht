@@ -2,7 +2,7 @@ use std::cmp::Ordering;
 use crate::constants::{N_BUCKETS, K_PARAM};
 use crate::key::{Distance, Key};
 
-use log::{debug, info, warn};
+use log::{info, warn};
 
 #[derive(Hash, Eq, PartialEq, Debug, Clone, RustcEncodable, RustcDecodable)]
 pub struct NodeInfo {

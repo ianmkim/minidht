@@ -1,4 +1,6 @@
 use std::fmt::{Debug, Error, Formatter};
+use crypto::digest::Digest as sha1Digest;
+use crypto::sha1::Sha1;
 use sha2::{Sha256, Digest};
 
 use rand;
@@ -18,6 +20,16 @@ impl Key {
             res[i] = rand::random::<u8>();
         } 
         Key(res)
+    }
+
+    pub fn hash_fast(data:String) -> Key {
+        let mut hasher = Sha1::new();
+        hasher.input_str(&data);
+        let mut hash = [0u8; KEY_LEN];
+        for (i, b) in hasher.result_str().as_bytes().iter().take(KEY_LEN).enumerate(){
+            hash[i] = *b;
+        }
+        Key(hash)
     }
 
     pub fn hash(data:String) -> Key {

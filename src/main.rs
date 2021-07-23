@@ -18,7 +18,7 @@ fn interactive() {
     let mut buffer = String::new();
     println!("Enter a <IP>:<PORT> <KEY> or leave blank");
     input.read_line(&mut buffer).unwrap();
-    let params = buffer.trim_right().split(' ').collect::<Vec<_>>();
+    let params = buffer.trim_end().split(' ').collect::<Vec<_>>();
     let bootstrap = if params.len() < 2 {
         None
     } else {
@@ -45,7 +45,7 @@ fn interactive() {
         if input.read_line(&mut buffer).is_err() {
             break;
         }
-        let args = buffer.trim_right().split(' ').collect::<Vec<_>>();
+        let args = buffer.trim_end().split(' ').collect::<Vec<_>>();
         match args[0].as_ref() {
             "p" => {
                 dummy_info.addr = String::from(args[1]);
