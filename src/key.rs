@@ -1,7 +1,5 @@
 use std::fmt::{Debug, Error, Formatter};
-
-use crypto::digest::Digest;
-use crypto::sha1::Sha1;
+use sha2::{Sha256, Digest};
 
 use rand;
 
@@ -23,11 +21,12 @@ impl Key {
     }
 
     pub fn hash(data:String) -> Key {
-        // TODO swap out for a less broken hasher
-        let mut hasher = Sha1::new();
-        hasher.input_str(&data);
+        let mut hasher = Sha256::new();
         let mut hash = [0u8; KEY_LEN];
-        for (i,b) in hasher.result_str().as_bytes().iter().take(KEY_LEN).enumerate() {
+        
+        hasher.update(data.as_bytes());
+        let result = hasher.finalize();
+        for (i, b) in result.iter().take(KEY_LEN).enumerate() {
             hash[i] = *b;
         }
         Key(hash)

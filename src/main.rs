@@ -13,12 +13,10 @@ use crate::key::*;
 use crate::node::*;
 use crate::routing::*;
 
-
-#[allow(deprecated)]
-fn main() {
-    env_logger::init();
+fn interactive() {
     let input = io::stdin();
     let mut buffer = String::new();
+    println!("Enter a <IP>:<PORT> <KEY> or leave blank");
     input.read_line(&mut buffer).unwrap();
     let params = buffer.trim_right().split(' ').collect::<Vec<_>>();
     let bootstrap = if params.len() < 2 {
@@ -30,11 +28,11 @@ fn main() {
             net_id: String::from("test_net"),
         })
     };
-    
+
 
     let handle = Node::start(String::from("test_net"),
         Key::random(),
-        "127.0.0.1:0", 
+        "127.0.0.1:0",
         bootstrap);
     let mut dummy_info = NodeInfo {
         net_id: String::from("test_net"),
@@ -86,4 +84,10 @@ fn main() {
             }
         }
     }
+}
+
+#[allow(deprecated)]
+fn main() {
+    env_logger::init();
+    interactive();
 }
