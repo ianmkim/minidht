@@ -1,14 +1,19 @@
 use std::fmt::{Debug, Error, Formatter};
+use crypto::digest::Digest as sha1Digest;
+use crypto::sha1::Sha1;
 use sha2::{Sha256, Digest};
+
+extern crate hex;
+use hex::FromHex;
+
+use serde::{Serialize, Deserialize};
 
 use rand;
 
-use rustc_serialize::{Decodable, Decoder, Encodable, Encoder};
-use rustc_serialize::hex::FromHex;
 
 use crate::constants::KEY_LEN;
 
-#[derive(Hash, Ord, PartialOrd, Eq,PartialEq, Copy, Clone)]
+#[derive(Hash, Ord, PartialOrd, Eq,PartialEq, Copy, Clone, Serialize, Deserialize)]
 pub struct Key([u8; KEY_LEN]);
 
 impl Key {
@@ -18,6 +23,16 @@ impl Key {
             res[i] = rand::random::<u8>();
         } 
         Key(res)
+    }
+
+    pub fn hash_fast(data:String) -> Key {
+        let mut hasher = Sha1::new();
+        hasher.input_str(&data);
+        let mut hash = [0u8; KEY_LEN];
+        for (i, b) in hasher.result_str().as_bytes().iter().take(KEY_LEN).enumerate(){
+            hash[i] = *b;
+        }
+        Key(hash)
     }
 
     pub fn hash(data:String) -> Key {
@@ -54,7 +69,7 @@ impl Debug for Key {
 impl From<String> for Key {
     fn from(s:String) -> Key {
         let mut ret = [0;KEY_LEN ];
-        for (i, byte) in s.from_hex().unwrap().iter().enumerate(){
+        for (i, byte) in Vec::from_hex(s).unwrap().iter().enumerate(){
             ret[i] = *byte;
         }
 
@@ -62,36 +77,7 @@ impl From<String> for Key {
     }
 }
 
-impl Decodable for Key {
-    fn decode<D:Decoder> (d: &mut D) -> Result<Key, D::Error> {
-        d.read_seq(|d, len |{
-            if len != KEY_LEN {
-                return Err(d.error("Wrong length key!"));
-            }
-
-            let mut ret = [0; KEY_LEN];
-            for i in 0..KEY_LEN {
-                ret[i] = d.read_seq_elt(i, Decodable::decode)?;
-            }
-
-            Ok(Key(ret))
-        })
-    }
-}
-
-impl Encodable for Key {
-    fn encode<S:Encoder>(&self, s:&mut S) -> Result<(), S::Error>{
-        s.emit_seq(KEY_LEN, |s| {
-            for i in 0..KEY_LEN {
-                s.emit_seq_elt(i, |s| self.0[i].encode(s))?;
-            }
-
-            Ok(())
-        })
-    }
-}
-
-#[derive(Hash, Ord, PartialOrd, Eq, PartialEq, Copy, Clone)]
+#[derive(Hash, Ord, PartialOrd, Eq, PartialEq, Copy, Clone, Serialize, Deserialize)]
 pub struct Distance([u8; KEY_LEN]);
 
 impl Distance {
@@ -115,34 +101,5 @@ impl Debug for Distance {
         }
 
         Ok(())
-    }
-}
-
-impl Decodable for Distance {
-    fn decode<D:Decoder>(d: &mut D) -> Result<Distance, D::Error> {
-        d.read_seq(|d, len| {
-            if len != KEY_LEN {
-                return Err(d.error("Wrong length Key!"));
-            }
-            
-            let mut ret = [0; KEY_LEN];
-            for i in 0..KEY_LEN {
-                ret[i] = d.read_seq_elt(i, Decodable::decode)?;
-            }
-
-            Ok(Distance(ret))
-        })
-    }
-}
-
-impl Encodable for Distance {
-    fn encode<S:Encoder>(&self, s:&mut S) -> Result<(), S::Error> {
-        s.emit_seq(KEY_LEN, |s|{
-            for i in 0..KEY_LEN {
-                s.emit_seq_elt(i, |s| self.0[i].encode(s))?;
-            }
-
-            Ok(())
-        })
     }
 }

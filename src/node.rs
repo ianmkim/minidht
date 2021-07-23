@@ -5,15 +5,15 @@ use std::sync::mpsc;
 use std::sync::mpsc::Receiver;
 use std::thread;
 
-use rustc_serialize::{Decoder, Encodable, Encoder};
 use log::{debug, info};
+use serde::{Serialize, Deserialize};
 
 use crate::constants::{A_PARAM, K_PARAM};
 use crate::key::Key;
 use crate::rpc::{ReqHandle, Rpc};
 use crate::routing::{NodeAndDistance, NodeInfo, RoutingTable};
 
-#[derive(Clone, Debug, RustcEncodable, RustcDecodable)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum Request {
     Ping,
     Store(String, String),
@@ -21,13 +21,13 @@ pub enum Request {
     FindValue(String),
 }
 
-#[derive(Clone, Debug, RustcEncodable, RustcDecodable)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum FindValueResult {
     Nodes(Vec<NodeAndDistance>),
     Value(String)
 }
 
-#[derive(Clone, Debug, RustcEncodable, RustcDecodable)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum Reply {
     Ping,
     FindNode(Vec<NodeAndDistance>),
