@@ -1,6 +1,7 @@
 extern crate env_logger;
 
 use std::io;
+use std::env;
 
 mod node;
 mod key;
@@ -11,6 +12,9 @@ mod constants;
 use crate::key::*;
 use crate::node::*;
 use crate::routing::*;
+
+
+use clap::{Arg, App};
 
 fn interactive() {
     let input = io::stdin();
@@ -87,6 +91,55 @@ fn interactive() {
 
 #[allow(deprecated)]
 fn main() {
+    let matches = App::new("MiniDHT")
+        .version("0.1.0")
+        .author("Ian Kim <ian@ianmkim.com>")
+        .about("A toy Kademlia DHT in Rust")
+        .arg(Arg::new("bootstrap")
+            .short('b')
+            .long("bootstrap")
+            .value_name("<IP>:<port>:<Node ID>")
+            .about("Bootstraps instance from IP port and Node ID triple")
+            .takes_value(true))
+        .arg(Arg::new("bootstrap-file")
+            .short('f')
+            .long("bootstrap-file")
+            .value_name("<filename>")
+            .about("Bootstraps instance from file")
+            .takes_value(true))
+        .arg(Arg::new("verbose")
+            .short('v')
+            .long("verbose")
+            .value_name("<verbosity>")
+            .about("Configures verbosity of log output")
+            .multiple_occurrences(true)
+            .takes_value(true))
+        .arg(Arg::new("interactive")
+            .short('i')
+            .long("interactive")
+            .about("launches node in interactive mode"))
+        .get_matches();
+
+    env::set_var("RUST_LOG", "info");
+    match matches.occurrences_of("v") {
+        0 => {
+            println!("Verbosity set to 0");
+            env::set_var("RUST_LOG", "");
+        }, 1 => {
+            println!("Verbosity set to 1");
+        }, 2 => {
+            println!("Verbosity set to 2");
+        }, _ => {
+            println!("Verbosity set to 2");
+        }
+    }
+
     env_logger::init();
-    interactive();
+
+    if matches.is_present("interactive") {
+        interactive();
+    } else {
+        
+    }
+
 }

@@ -8,6 +8,7 @@ authors = ["Ian Kim <ian@ianmkim.com>"]
 serde = {version="1.0", features = ["derive"]}
 hex="0.4.3"
 serde_json = "1.0"
+clap = "3.0.0-beta.2"
 rand = "0.8.*"
 sha2="0.9.*"
 rust-crypto="*"

@@ -8,7 +8,6 @@ use std::thread;
 use std::time::Duration;
 
 use log::{info, warn, debug};
-use rustc_serialize::json;
 
 use serde::{Serialize, Deserialize};
 use serde_json;
