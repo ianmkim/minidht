@@ -16,22 +16,9 @@ use crate::routing::*;
 
 use clap::{Arg, App};
 
-fn interactive() {
+fn interactive(bootstrap:Option<NodeInfo>) {
     let input = io::stdin();
     let mut buffer = String::new();
-    println!("Enter a <IP>:<PORT> <KEY> or leave blank");
-    input.read_line(&mut buffer).unwrap();
-    let params = buffer.trim_end().split(' ').collect::<Vec<_>>();
-    let bootstrap = if params.len() < 2 {
-        None
-    } else {
-        Some(NodeInfo {
-            id: Key::from(String::from(params[1])),
-            addr: String::from(params[0]),
-            net_id: String::from("test_net"),
-        })
-    };
-
 
     let handle = Node::start(String::from("test_net"),
         Key::random(),
@@ -89,7 +76,6 @@ fn interactive() {
     }
 }
 
-#[allow(deprecated)]
 fn main() {
     let matches = App::new("MiniDHT")
         .version("0.1.0")
@@ -105,14 +91,13 @@ fn main() {
             .short('f')
             .long("bootstrap-file")
             .value_name("<filename>")
-            .about("Bootstraps instance from file")
+            .about("Bootstraps instance from file <not yet implemented>")
             .takes_value(true))
         .arg(Arg::new("verbose")
             .short('v')
             .long("verbose")
             .value_name("<verbosity>")
             .about("Configures verbosity of log output")
-            .multiple_occurrences(true)
             .takes_value(true))
         .arg(Arg::new("interactive")
             .short('i')
@@ -121,25 +106,42 @@ fn main() {
         .get_matches();
 
     env::set_var("RUST_LOG", "info");
-    match matches.occurrences_of("v") {
-        0 => {
-            println!("Verbosity set to 0");
-            env::set_var("RUST_LOG", "");
-        }, 1 => {
-            println!("Verbosity set to 1");
-        }, 2 => {
-            println!("Verbosity set to 2");
-        }, _ => {
-            println!("Verbosity set to 2");
+    if matches.is_present("verbose") {
+        match matches.value_of("verbose").unwrap(){
+            "0" => {
+                println!("Verbosity set to 0");
+                env::set_var("RUST_LOG", "");
+            }, "1" => {
+                println!("Verbosity set to 1");
+            }, "2" => {
+                println!("Verbosity set to 2");
+            }, _ => {
+                println!("Verbosity set to 2");
+            }
         }
     }
-
     env_logger::init();
 
+    let mut triple = Vec::new();
+    if matches.is_present("bootstrap"){
+        triple = matches.value_of("bootstrap").unwrap().split(":").collect::<Vec<_>>();
+    }
+    let bootstrap = if triple.len() == 3 {
+        Some(NodeInfo {
+            id: Key::from(String::from(triple[2])),
+            addr: String::from(triple[0].to_owned()+ ":" + triple[1]),
+            net_id: String::from("test_net"),
+        })
+    } else { None};
+
     if matches.is_present("interactive") {
-        interactive();
+        interactive(bootstrap);
     } else {
-        
+        let handle = Node::start(String::from("test_net"),
+            Key::random(),
+            "127.0.0.1:0",
+            bootstrap);
+        loop{}
     }
 
 }

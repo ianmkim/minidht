@@ -12,6 +12,7 @@ This project should never be used in production and is mostly being used for me 
  - [ ] Accept files for initial peer list
  - [ ] Run benchmarks against other Kademlia implementations
  - [ ] Write unit tests for major features
+ - [ ] Write a http client for a node
 
 ## Credits
 Based on https://github.com/leejunseok/kademlia-rs and http://pdos.csail.mit.edu/~petar/papers/maymounkov-kademlia-lncs.pdf

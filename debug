@@ -1,3 +1,4 @@
 #!/bin/sh
 
-RUSTFLAGS=-Awarnings RUST_LOG=info cargo run
+cargo build
+RUSTFLAGS=-Awarnings RUST_LOG=info ./target/debug/minidht "$@"
