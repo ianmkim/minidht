@@ -11,7 +11,7 @@ This project should never be used in production and is mostly being used for me 
  - [x] Proper CLI interface
  - [ ] Accept files for initial peer list
  - [ ] Run benchmarks against other Kademlia implementations
- - [ ] Write unit tests for major features
+ - [x] Write unit tests for major features
  - [ ] Write a http client for a node
 
 ## Credits
