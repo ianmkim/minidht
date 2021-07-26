@@ -40,7 +40,7 @@ pub struct Node{
     routes: Arc<Mutex<RoutingTable>>,
     store: Arc<Mutex<HashMap<String, String>>>,
     rpc: Arc<Rpc>,
-    node_info:NodeInfo,
+    pub node_info:NodeInfo,
 }
 
 impl Node {
@@ -144,6 +144,10 @@ impl Node {
             routes.remove(&dst);
             None
         }
+    }
+
+    pub fn _return_routing_table(&self) -> RoutingTable{
+        self.routes.lock().unwrap().clone()
     }
 
     pub fn store(&self, dst:NodeInfo, k:String, v:String) -> Option<()> {

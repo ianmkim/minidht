@@ -13,7 +13,7 @@ pub struct NodeInfo {
     pub net_id:String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct RoutingTable {
     node_info:NodeInfo,
     buckets:Vec<Vec<NodeInfo>>
@@ -52,6 +52,11 @@ impl RoutingTable {
         };
         ret.update(node_info.clone());
         ret
+    }
+
+    /// Returns a clone of inner bucket instance for debugging and unit testing purposes
+    pub fn _get_buckets(&self) -> Vec<Vec<NodeInfo>> {
+        self.buckets.clone()
     }
 
     pub fn update(&mut self, node_info:NodeInfo){
