@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use std::collections::{HashMap, HashSet, BinaryHeap};
 use std::net::UdpSocket;
 use std::sync::{Arc, Mutex};
@@ -5,7 +6,7 @@ use std::sync::mpsc;
 use std::sync::mpsc::Receiver;
 use std::thread;
 
-use log::{debug, info};
+use log::{info};
 use serde::{Serialize, Deserialize};
 
 use crate::constants::{A_PARAM, K_PARAM};

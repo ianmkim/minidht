@@ -1,3 +1,5 @@
+#[allow(dead_code)]
+#[allow(unused_variables)]
 extern crate env_logger;
 
 use std::io;
@@ -18,8 +20,6 @@ use clap::{Arg, App};
 
 fn interactive(bootstrap:Option<NodeInfo>) {
     let input = io::stdin();
-    let mut buffer = String::new();
-
     let handle = Node::start(String::from("test_net"),
         Key::random(),
         "127.0.0.1:0",
@@ -137,7 +137,7 @@ fn main() {
     if matches.is_present("interactive") {
         interactive(bootstrap);
     } else {
-        let handle = Node::start(String::from("test_net"),
+        let _handle = Node::start(String::from("test_net"),
             Key::random(),
             "127.0.0.1:0",
             bootstrap);

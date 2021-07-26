@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use std::fmt::{Debug, Error, Formatter};
 use crypto::digest::Digest as sha1Digest;
 use crypto::sha1::Sha1;

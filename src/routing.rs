@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use std::cmp::Ordering;
 use crate::constants::{N_BUCKETS, K_PARAM};
 use crate::key::{Distance, Key};
